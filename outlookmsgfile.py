@@ -832,5 +832,8 @@ if __name__ == "__main__":
     for fn in sys.argv[1:]:
       print(fn + "...")
       msg = load(fn)
-      with open(fn + ".eml", "wb") as f:
+      noext = os.path.splitext(fn)[0]
+      if "eml_files" not in os.listdir():
+        os.makedirs("eml_files")
+      with open(os.path.join("eml_files", noext) + ".eml", "wb") as f:
         f.write(msg.as_bytes())
