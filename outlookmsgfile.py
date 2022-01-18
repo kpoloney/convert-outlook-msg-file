@@ -316,10 +316,13 @@ class STRING8(VariableLengthValueLoader):
     # is used when the Unicode storage type is not used, so we'll assume it's
     # ASCII or Latin-1 like but we'll use UTF-8 to cover the bases.
     try:
-        return value.decode("utf8")
-    except:
+      return value.decode("utf8")
+    except UnicodeDecodeError:
+      try:
         nval = UnicodeDammit.detwingle(value)
         return nval.decode("utf8")
+      except:
+        return value.decode('cp1252')
 
 class UNICODE(VariableLengthValueLoader):
   @staticmethod
