@@ -55,7 +55,7 @@ def load_message_stream(entry, is_top_level, doc):
     # way is just the plain-text portion of the email and whatever
     # Content-Type header was in the original is not valid for
     # reconstructing it this way.
-    headers = re.sub("Content-Type: .*(\n\s.*)*\n", "", headers, flags=re.I)
+    headers = re.sub(r"Content-Type: .*(\n\s.*)*\n", "", headers, flags=re.I)
 
     # Parse them.
     headers = email.parser.HeaderParser(policy=email.policy.default)\
@@ -294,7 +294,11 @@ class INTTIME(FixedLengthValueLoader):
     # 100-nanosecond intervals since January 1, 1601.
     from datetime import datetime, timedelta
     value = reduce(lambda a, b : (a<<8)+b, reversed(value)) # bytestring to integer
-    value = datetime(1601, 1, 1) + timedelta(seconds=value/10000000)
+    try:
+        value = datetime(1601, 1, 1) + timedelta(seconds=value/10000000)
+    except OverflowError:
+        value = None
+
     return value
 
 # TODO: The other fixed-length data types:
